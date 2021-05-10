@@ -19,5 +19,5 @@ app_name='users'
 urlpatterns = [
     path('',views.index),
     path('register/',views.register,name='register'),
-    path('image_code/<uuid:img_id>/',views.Image_code,name='image_code'),
+
 ]
