@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.urls import path,include
 from . import  views
+app_name='users'
 urlpatterns = [
-    path('',views.demo),
+    path('',views.index),
+    path('register/',views.register,name='register'),
+    path('image_code/<uuid:img_id>/',views.Image_code,name='image_code'),
 ]

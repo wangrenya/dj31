@@ -14,13 +14,13 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-import sys
-sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
 # import sys
-#
-# # 创建应用之后，把apps目录加入到sys.path中
-# sys.path.insert(0, BASE_DIR)
-# sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
+# sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+import sys
+
+# 创建应用之后，把apps目录加入到sys.path中
+sys.path.insert(0, BASE_DIR)
+sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -45,6 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'news',
+    'docs',
+    'courses',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'dj31.urls'
@@ -70,16 +75,16 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'users',
-                'news',
-                'docs',
-                'courses',
+
             ],
+            'builtins': ['django.templatetags.static'],
         },
     },
 ]
 
 WSGI_APPLICATION = 'dj31.wsgi.application'
+
+AUTH_USER_MODEL = 'users.Users'
 
 
 # Database
@@ -106,6 +111,14 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    #添加图形验证库
+"verify": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
