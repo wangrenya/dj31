@@ -2,6 +2,7 @@ $(function (){
 
   let $img = $('.form-item .captcha-graph-img img') ;//获取图像
      let $username = $('#user_name');
+     let $mobile   = $(' #mobile ');
 
 
 
@@ -33,8 +34,6 @@ $(function (){
   // 用户用户名
     // 2、用户名验证逻辑
     // blur,触发失去焦点事件
-
-
   $username.blur(function () {
     fn_check_username();
   });
@@ -58,13 +57,54 @@ $(function (){
     })
       .done(function (res) {
         if (res['count'] ===1) {
-          message.showError('已注册，请重新输入！')
+          message.showError('这个用户名已被注册，请重新输入用户名！')
         } else {
-          message.showInfo( '能正常使用！')
+          message.showInfo( '用户名，能正常使用！')
         }
       })
       .fail(function () {
         message.showError('服务器超时，请重试！');
       });
   }
-})
+
+ //手机号验证逻辑
+    $mobile.blur(function () {
+    fn_check_mobile();
+  });
+    function fn_check_mobile(){
+        let sMobile = $mobile.val();
+        if ( sMobile === ''){
+            message.showError('手机号不能为空！');
+            return
+        }
+        if (!(/^1[345789]\d{9}$/).test(sMobile)) {
+            message.showError('手机号格式输入错误请重新输入');
+            return;
+
+        }
+    $.ajax(
+        {
+            url : '/mobile/' + sMobile + '/',
+            type: 'GET',
+            dataType: 'json',
+        }
+    )
+        .done(function (res) {
+        if (res['count'] ===1) {
+          message.showError('此手机号已被注册，请更换手机号码重新输入！')
+        } else {
+          message.showInfo( '手机号格式正确，能正常使用！')
+        }
+      })
+      .fail(function () {
+        message.showError('服务器超时，请重试！');
+      });
+
+
+    }
+
+
+
+
+
+});

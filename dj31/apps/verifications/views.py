@@ -7,7 +7,8 @@ from django_redis import  get_redis_connection
 import  logging
 logger = logging.getLogger('django')
 from django.views import View
-from users.models import Users
+# from users.models import Users
+from  users.models import Users
 
 
 
@@ -38,3 +39,14 @@ class CheckUsernameView(View):
             'count': Users.objects.filter(username=username).count()
         }
         return JsonResponse(data=data)
+#手机号验证
+class CheckMobileView(View):
+    """
+    检查电话号码是否存在
+    """
+    def get(self,request,mobile):
+        data = {
+            'mobile': mobile,
+            'count': Users.objects.filter(mobile=mobile).count()
+        }
+        return  JsonResponse(data=data)
