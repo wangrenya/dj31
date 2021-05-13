@@ -2,6 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import  HttpResponse,JsonResponse
+
+from celery_tesks.sms.tasks import send_sms_code
 from dj31.utils.captcha.captcha import captcha
 from django_redis import  get_redis_connection
 import json
@@ -113,4 +115,5 @@ class SmsCodeView(View):
     #     ccp = CCP()
     #     ccp.send_template_sms(mobile, [sms_code, 5], 1)
     # 响应结果
+        send_sms_code.delay(mobile,sms_code)
         return res_json(errmsg='短信验证码发送成功')

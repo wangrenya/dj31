@@ -63,7 +63,7 @@ if __name__ == '__main__':
     # 注意： 测试的短信模板编号为1
     result = None
     while True:
-        result = ccp.send_template_sms('mobile', ['88888', 5], "1")
+        result = ccp.send_template_sms('13661664208', ['88888', 5], "1")
         if result == 0:
             print('短信验证码发送成功！')
             break
