@@ -2,8 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import  HttpResponse,JsonResponse
-
-from celery_tesks.sms.tasks import send_sms_code
+from  celery_tasks.sms.tasks import send_sms_code
 from dj31.utils.captcha.captcha import captcha
 from django_redis import  get_redis_connection
 import json
@@ -58,7 +57,7 @@ class CheckMobileView(View):
             'mobile': mobile,
             'count': Users.objects.filter(mobile=mobile).count()
         }
-        return res_json(data=data)
+        return JsonResponse(data=data)
 #短信验证码
 class SmsCodeView(View):
     def post(self,request):
@@ -70,7 +69,7 @@ class SmsCodeView(View):
         if not json_str:
             return res_json(errno=Code.PARAMERR,errmsg='参数错误')
 
-        dict_data = json.loads(json_str)
+        dict_data = json.loads(json_str,strict=False)
         image_code_client = dict_data.get('text')
         uuid = dict_data.get('image_code_id')
         mobile = dict_data.get('mobile')
@@ -117,3 +116,5 @@ class SmsCodeView(View):
     # 响应结果
         send_sms_code.delay(mobile,sms_code)
         return res_json(errmsg='短信验证码发送成功')
+
+

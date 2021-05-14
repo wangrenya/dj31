@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="../../static/css/base/side.css">
   <link rel="stylesheet" href="http://at.alicdn.com/t/font_684044_un7umbuwwfp.css">
 {#css坑#}
- {% block link %}{% endblock %}
+ {% block link %}
+
+ {% endblock %}
 
 </head>
 <body>
@@ -35,7 +37,7 @@
           <div>
               <i class="PyWhich py-user"></i>
               <span>
-                  <a href="../users/login.html" class="login">登录</a> / <a href="{% url 'users:register' %}"
+                  <a href="{% url 'users:login' %}" class="login">登录</a> / <a href="{% url 'users:register' %}"
                                                                           class="reg">注册</a>
               </span>
           </div>
