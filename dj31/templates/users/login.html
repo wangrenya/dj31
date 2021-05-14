@@ -4,6 +4,7 @@
 {% endblock %}
 {% block link %}
      <link rel="stylesheet" href="../../static/css/authPro/auth.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1827494_x6h5wkip53.css">
 {% endblock %}
 {% block main  %}
     <!-- container start -->
@@ -11,14 +12,15 @@
   <div class="login-contain">
     <div class="top-contain">
       <h4 class="please-login">请登录</h4>
-      <a href="javascript:void(0);" class="register">立即注册 &gt;</a>
+      <a href="{% url 'users:register' %}" class="register">立即注册 &gt;</a>
     </div>
     <form action="" method="post" class="form-contain">
       <div class="form-item">
-        <input type="tel" placeholder="请输入手机号" name="telephone" class="form-control" autocomplete="off">
+           {% csrf_token %}
+        <input type="tel" placeholder="Username or email Mobile" name="telephone" class="form-control" autocomplete="off">
       </div>
       <div class="form-item">
-        <input type="password" placeholder="请输入密码" name="password" class="form-control">
+        <input type="password" placeholder="Password" name="password" class="form-control">
       </div>
       <div class="form-item clearfix">
         <label>
@@ -30,12 +32,19 @@
       <div class="form-login">
         <input type="submit" value="登录" class="login-btn">
       </div>
+        <div class  ='qq' style="margin-top: 8px ;color:deepskyblue">
+            <i class="iconfont icon-QQ icon-qq" style="font-size: 25px;"></i>
+            <a href="{% url 'qauth:qq_login' %}"  class="qq_login" style="font-size: 18px">QQ</a>
+        </div>
     </form>
   </div>
 </main>
 <!-- container end -->
 
 <!-- container end -->
+{% endblock %}
+{% block script %}
+    <script src="../../static/js/user/login.js"></script>
 {% endblock %}
 
 
