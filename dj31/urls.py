@@ -20,4 +20,5 @@ urlpatterns = [
     # path('admin/', admin.site.urls),
     path('user/',include('users.urls')),
     path('',include('verifications.urls')),
+    path('',include('qauth.urls')),
 ]

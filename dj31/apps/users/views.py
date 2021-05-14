@@ -14,6 +14,7 @@ from django.http import  HttpResponse
 # def demo(request):
 #     return HttpResponse('hello world')
 from users.models import Users
+from .forms import LoginForm
 
 
 def index(request):
@@ -86,11 +87,32 @@ class RegisView(View):
         # 2.状态保持
         login(request, user)
 
-        return res_json(errno=Code.OK,errmsg='恭喜你注册成功')
+        return res_json(errno=Code.OK,errmsg='恭喜贵宾你注册成功')
 
 
 class LoginView(View):
     def get(self,request):
         return render(request,'users/login.html')
+    def  post(self,request):
+        js_str=request.body
+        if not js_str:
+            return res_json(errno=Code.PARAMERR,errmsg='参数错误')
+        dict_data= json.loads(js_str.decode())
+
+        #数据验证
+        form = LoginForm(data=dict_data,request=request)
+        if form.is_valid():
+        # 表单验证成工处理
+            return res_json(errno=Code.OK,errmsg='贵宾你登录成功')
+
+        else:
+        # 表单验证失败处理
+            msg_list = []
+            for i in form.errors.get_json_data().values():
+                msg_list.append(i[0].get('message'))
+                msg_str = '/'.join(msg_list)
+                return res_json(errno=Code.PARAMERR, errmsg=msg_str)
+
+
 s=index
 
