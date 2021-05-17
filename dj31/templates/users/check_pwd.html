@@ -1,0 +1,49 @@
+{% extends 'base/base.html' %}
+{% block title %}
+    登录页面
+{% endblock %}
+{% block link %}
+     <link rel="stylesheet" href="../../static/css/users/check_pwd.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_1827494_x6h5wkip53.css">
+{% endblock %}
+{% block main  %}
+    <!-- container start -->
+<main id="container">
+  <div class="login-contain">
+    <div class="top-contain">
+      <h4 class="please-login">密码修改</h4>
+    </div>
+    <form action="" method="post" class="form-contain">
+      <div class="form-item">
+           {% csrf_token %}
+         <input type="tel" placeholder="请输入手机号" id="mobile" name="telephone" class="form-control" autocomplete="off" >
+      </div>
+      <div class="form-item">
+        <input type="password" placeholder="请输入旧密码" name="old_password" class="form-control">
+      </div>
+        <div class="form-item">
+        <input type="password" placeholder="请输入新密码" name="new_password" class="form-control">
+      </div>
+      <div class="form-item clearfix">
+      </div>
+      <div class="form-login">
+        <input type="submit" value="登录" class="login-btn">
+        <input type="submit" value="取消" class="login-btn">
+      </div>
+
+    </form>
+  </div>
+</main>
+<!-- container end -->
+
+<!-- container end -->
+{% endblock %}
+
+
+{% block script %}
+    <script src="../../static/js/user/check_pwd.js"></script>
+    <script src="../../static/js/base/message.js"></script>
+{%  endblock %}
+
+
+
