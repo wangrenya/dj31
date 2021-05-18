@@ -63,6 +63,7 @@ $(function (){
         if (res['count'] ===0) {
           message.showError('此手机号没有在本平台注册')
         } else {
+            message.showSuccess('此号码可以重置密码')
              isMobileReady = true;
         }
       })
