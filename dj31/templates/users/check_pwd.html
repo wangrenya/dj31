@@ -26,10 +26,13 @@
       </div>
       <div class="form-item clearfix">
       </div>
-      <div class="form-login">
+      <a class="form-login">
         <input type="submit" value="登录" class="login-btn">
-        <input type="submit" value="取消" class="login-btn">
-      </div>
+
+
+        <input type="button"  value="取消"   onclick=window.open("{% url 'users:login' %}"); class="done-btn"  >
+
+     </a>
 
     </form>
   </div>

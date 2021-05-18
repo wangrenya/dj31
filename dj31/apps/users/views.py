@@ -146,25 +146,22 @@ class CheckPwd(View):
             return HttpResponseForbidden('输入的手机号有误')
         user = Users.objects.get(mobile=mobile)
         if user:
-            try:
-                user.check_password(old_password)
-            except Exception as e:
-                # logger.error(e)
-                return HttpResponseForbidden('原始密码输入错误')
+            result = user.check_password(old_password)
+            if result:
             # 密码验证
-            if not re.match(r'^[0-9A-Za-z]{6,20}$', new_password):
-                return HttpResponseForbidden('密码格式错误')
-            # 密码对比
-            if old_password == new_password:
-                return HttpResponseForbidden('密码未修改')
-            # 密码修改
-            user.set_password(new_password)
-            user.save()
-
-            return res_json(errmsg='密码已更新，请回去登录')
+                if not re.match(r'^[0-9A-Za-z]{6,20}$', new_password):
+                    return HttpResponseForbidden('密码格式错误')
+             # 密码对比
+                if old_password == new_password:
+                    return HttpResponseForbidden('密码未修改')
+                # 密码修改
+                user.set_password(new_password)
+                user.save()
+                return res_json(errmsg='密码已更新，请回去登录')
+            else:
+                return res_json(errno=Code.PARAMERR, errmsg='旧密码错误请重新输入旧密码')
         else:
-            return HttpResponseForbidden('账号手机号不存在')
-
+             return res_json(errno=Code.PARAMERR, errmsg='手机号未在本平台注册，请先注册')
 #修改密码
 class Passwd(View):
     def get(self,request):

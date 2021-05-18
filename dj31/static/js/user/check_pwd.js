@@ -3,9 +3,9 @@ $(function (){
           let $mobile   = $(' #mobile ');
 
 // 标记
-    let isUsernameReady = false,
-        isPasswordReady = false,
+
         isMobileReady = false;
+
 
 
 
@@ -132,11 +132,11 @@ $(function (){
           // 修改成功
           message.showSuccess('密码修改成功');
            setTimeout(() => {
-            // 注册成功之后重定向到主页
+            //修改成功之后重定向到主页
             window.location.href = '/user/login/';
           }, 1500)
         } else {
-          // 注册失败，打印错误信息
+          // 修改失败，打印错误信息
           message.showError(res.errmsg);
 
         }
