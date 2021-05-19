@@ -20,9 +20,7 @@ from users.models import Users
 from .forms import LoginForm
 
 
-def index(request):
 
-    return render(request,'news/index.html')
 class RegisView(View):
     def get(self,request):
 
@@ -201,5 +199,5 @@ class Passwd(View):
             user.set_password(psd)
             user.save()
             return res_json(errmsg='密码已更新，请回去登录')
-s=index
+
 

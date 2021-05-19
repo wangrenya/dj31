@@ -21,4 +21,5 @@ urlpatterns = [
     path('user/',include('users.urls')),
     path('',include('verifications.urls')),
     path('',include('qauth.urls')),
+    path('',include('news.urls')),
 ]

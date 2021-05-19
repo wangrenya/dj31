@@ -104,25 +104,17 @@
         <!--  news-nav start-->
           <nav class="news-nav">
               <ul class="clearfix">
-                  <li class="active"><a href="javascript:void(0)">最新资讯</a></li>
-
-                  <li><a href="javascript:void(0)" data-id="1">python框架</a>
+                  <li class="active"><a href="javascript:void(0)">最新资讯</a>
                   </li>
+                  {% for i in tags %}
+                  <li><a href="javascript:void(0)" data-id="{{ i.id }}">{{i.name}}</a>
 
-                  <li><a href="javascript:void(0)" data-id="2">Python基础</a>
                   </li>
+                  {% endfor %}
 
-                  <li><a href="javascript:void(0)" data-id="3">Python高级</a>
-                  </li>
 
-                  <li><a href="javascript:void(0)" data-id="4">Python函数</a>
-                  </li>
 
-                  <li><a href="javascript:void(0)" data-id="5">PythonGUI</a>
-                  </li>
 
-                  <li><a href="javascript:void(0)" data-id="6">Linux教程</a>
-                  </li>
 
               </ul>
           </nav>
