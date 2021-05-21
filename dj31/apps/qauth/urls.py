@@ -14,10 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path,re_path,include
+from django.views.static import serve
+
+from dj31.settings import dev
 from . import  views
 
 app_name='qauth'
 urlpatterns = [
     re_path('qq_login/',views.QQ_login.as_view(),name='qq_login'),
+    # re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT})
 
 ]

@@ -11,16 +11,14 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import sys
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# import sys
-# sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
-import sys
 
-# 创建应用之后，把apps目录加入到sys.path中
-sys.path.insert(0, BASE_DIR)
-sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+sys.path.insert(0, os.path.join(BASE_DIR, ''))
 
 
 # Quick-start development settings - unsuitable for production
@@ -33,7 +31,7 @@ SECRET_KEY = 'ad&^#92j-7e8ih#7$^thoy0%^btg=(%&gbbq55!85v2g6nle40'
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['47.100.67.17']
+ALLOWED_HOSTS = ['47.100.67.17','*']
 
 
 # Application definition
@@ -45,12 +43,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'news',
     'users',
     'verifications',
-    'news',
     'docs',
     'courses',
     'qauth',
+
 ]
 
 MIDDLEWARE = [
@@ -210,3 +209,9 @@ USE_TZ = True
 #静态文件配置
 STATIC_URL = '/static/'
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+
+# 在settings.py文件中添加如下配置：
+
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT =os.path.join(BASE_DIR, 'media')

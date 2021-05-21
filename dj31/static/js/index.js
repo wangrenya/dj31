@@ -1,4 +1,4 @@
-$( ()=> {
+$(() =>{
   // 新闻列表功能
   let $newsLi = $(".news-nav ul li");
   let iPage = 1;  //默认第1页
@@ -58,9 +58,62 @@ $( ()=> {
     }
   });
 
+ // fn_load_banner();
+  /*=== bannerStart ===*/
+  let $banner = $('.banner');
+  let $picLi = $(".banner .pic li");
+  let $prev = $('.banner .prev');
+  let $next = $('.banner .next');
+  let $tabLi = $('.banner .tab li');
+  let index = 0;
+
+  // 小原点
+  $tabLi.click(function () {
+    index = $(this).index();
+    $(this).addClass('active').siblings('li').removeClass('active');
+    $picLi.eq(index).fadeIn(1500).siblings('li').fadeOut(1500);
+  });
+  // 点击切换上一张
+  $prev.click(function () {
+    index--;
+    if (index < 0) {
+      index = $tabLi.length - 1
+    }
+    $tabLi.eq(index).addClass('active').siblings('li').removeClass('active');
+    $picLi.eq(index).fadeIn(1500).siblings('li').fadeOut(1500);
+  }).mousedown(function () {
+    return false
+  });
+
+  $next.click(function () {
+    auto();
+  }).mousedown(function () {
+    return false
+  });
+  //  图片向前滑动
+  function auto() {
+    index++;
+    index %= $tabLi.length;
+    $tabLi.eq(index).addClass('active').siblings('li').removeClass('active');
+    $picLi.eq(index).fadeIn(3000).siblings('li').fadeOut(3000);
+  }
+
+  // 定时器
+  let timer = setInterval(auto, 2000);
+  $banner.hover(function () {
+    clearInterval(timer)
+  }, function () {
+    auto();
+  });
+
+  /*=== bannerEnd ===*/
+
+
 
   // 定义向后端获取新闻列表数据的请求
-  function fn_load_content() {
+
+
+ function fn_load_content() {
     // let sCurrentTagId = $('.active a').attr('data-id');
 
     // 创建请求参数
@@ -78,22 +131,24 @@ $( ()=> {
       data: sDataParams,
       // 响应数据的格式（后端返回给前端的格式）
       dataType: "json",
+
     })
-      .done(function (res) {
+
+        .done(function (res) {
         if (res.errno === "0") {
           iTotalPage = res.data.total_pages;  // 后端传过来的总页数
           if (iPage === 1) {
             $(".news-list").html("")
           }
-
+        // // 需要修改 href  接收后台传来的id号 响应详情页  /news/${one_news.id}/
           res.data.news.forEach(function (one_news) {
             let content = `
               <li class="news-item">
-                 <a href="#" class="news-thumbnail" target="_blank">
+                 <a href="/news/${one_news.id}/" class="news-thumbnail" target="_blank">
                     <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
                  </a>
                  <div class="news-content">
-                    <h4 class="news-title"><a href="#">${one_news.title}</a></h4>
+                    <h4 class="news-title"><a href="/news/${one_news.id}/">${one_news.title}</a></h4>
                     <p class="news-details">${one_news.digest}</p>
                     <div class="news-other">
                       <span class="news-type">${one_news.tag_name}</span>
@@ -114,9 +169,54 @@ $( ()=> {
           message.showError(res.errmsg);
         }
       })
-      .fail(function () {
-        message.showError('服务器超时，请重试！');
+        .fail(function () {
+        message.showError('服务器超时请重试！');
       });
   }
+
+  // function fn_load_banner() {
+  //   $.ajax({
+  //     // 请求地址
+  //     url: "/news/banners/",  // url尾部需要添加/
+  //     // 请求方式
+  //     type: "GET",
+  //     async: false
+  //   })
+  //     .done(function (res) {
+  //       if (res.errno === "0") {
+  //         let content = ``;
+  //         let tab_content = ``;   //按钮
+  //         res.data.banner.forEach(function (one_banner, index) {
+  //           if (index === 0){
+  //             // 需要修改 href  接收后台传来的id号 响应详情页  one_banner.news_id
+  //             content = `
+  //               <li style="display:block;"><a href="/news/${one_banner.news_id}/">
+  //                <img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+  //             `;
+  //             tab_content = `<li class="active"></li>`;
+  //           } else {
+  //             content = `
+  //             <li><a href="/news/${one_banner.news_id}/"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+  //             `;
+  //             tab_content = `<li></li>`;
+  //           }
+  //
+  //           $(".pic").append(content);  // 内容
+  //           $(".tab").append(tab_content); // 标签
+  //         });
+  //
+  //       } else {
+  //         // 登录失败，打印错误信息
+  //         message.showError(res.errmsg);
+  //       }
+  //     })
+  //     .fail(function () {
+  //       message.showError('服务器超时，请重试！');
+  //     });
+  // }
+
+
+
+
 
 });
