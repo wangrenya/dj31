@@ -2,10 +2,15 @@ import logging
 import re
 
 from django.contrib.auth import login, logout
+from django.core.paginator import Paginator
+from django.db.models import F
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
+
+from news.models import News
+
 logger = logging.getLogger('django')
 
 from dj31.utils.response_code import res_json,Code,error_map
