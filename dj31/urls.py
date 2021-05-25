@@ -14,9 +14,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+<<<<<<< HEAD
 from django.urls import path, include, re_path
 from django.views.static import serve
 
+=======
+
+from django.urls import path, include, re_path
+from django.views.static import serve
+
+
+>>>>>>> news
 from dj31.settings import dev
 from django.conf import settings
 urlpatterns = [
@@ -25,6 +33,10 @@ urlpatterns = [
     path('',include('verifications.urls')),
     path('',include('qauth.urls')),
     path('',include('news.urls')),
+<<<<<<< HEAD
     re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT})
+=======
+    # re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT}),
+>>>>>>> news
 
 ]

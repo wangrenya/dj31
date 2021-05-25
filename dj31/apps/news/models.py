@@ -50,6 +50,10 @@ class News(ModelBase):
     def __str__(self):
         return self.title
 
+    def in_clicks(self):
+        self.clicks += 1
+        self.save(update_fields=['clicks'])
+
 #评论
 class Comments(ModelBase):
     """
@@ -65,8 +69,13 @@ class Comments(ModelBase):
         verbose_name = "评论"  # 在admin站点中显示的名称
         verbose_name_plural = verbose_name  # 显示的复数名称
 
+
+
     def __str__(self):
         return '<评论{}>'.format(self.id)
+
+
+
 
 #热门新闻
 class HotNews(ModelBase):
@@ -89,8 +98,16 @@ class Banner(ModelBase):
     """
     """
     image_url = models.URLField(verbose_name="轮播图url", help_text="轮播图url")
+    B_CHOICES = [
+        (1, '第一级'),
+        (2, '第二级'),
+        (3, '第三级'),
+        (4, '第四级'),
+        (5, '第五级'),
+        (6, '第六级'),
+    ]
     priority = models.IntegerField(verbose_name="优先级", help_text="优先级")
-    news = models.OneToOneField('News', on_delete=models.CASCADE)
+    news = models.OneToOneField('News', on_delete=models.CASCADE,choices=B_CHOICES,default=6)
 
     class Meta:
         ordering = ['priority', '-update_time', '-id']

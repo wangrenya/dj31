@@ -58,7 +58,11 @@ $(() =>{
     }
   });
 
+<<<<<<< HEAD
  // fn_load_banner();
+=======
+ fn_load_banner();
+>>>>>>> news
   /*=== bannerStart ===*/
   let $banner = $('.banner');
   let $picLi = $(".banner .pic li");
@@ -144,11 +148,19 @@ $(() =>{
           res.data.news.forEach(function (one_news) {
             let content = `
               <li class="news-item">
+<<<<<<< HEAD
                  <a href="/news/${one_news.id}/" class="news-thumbnail" target="_blank">
                     <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
                  </a>
                  <div class="news-content">
                     <h4 class="news-title"><a href="/news/${one_news.id}/">${one_news.title}</a></h4>
+=======
+                 <a href="/new/${one_news.id}/" class="news-thumbnail" target="_blank">
+                    <img src="${one_news.image_url}" alt="${one_news.title}" title="${one_news.title}">
+                 </a>
+                 <div class="news-content">
+                    <h4 class="news-title"><a href="/new/${one_news.id}/">${one_news.title}</a></h4>
+>>>>>>> news
                     <p class="news-details">${one_news.digest}</p>
                     <div class="news-other">
                       <span class="news-type">${one_news.tag_name}</span>
@@ -174,6 +186,7 @@ $(() =>{
       });
   }
 
+<<<<<<< HEAD
   // function fn_load_banner() {
   //   $.ajax({
   //     // 请求地址
@@ -214,6 +227,50 @@ $(() =>{
   //       message.showError('服务器超时，请重试！');
   //     });
   // }
+=======
+
+
+  function fn_load_banner() {
+    $.ajax({
+      // 请求地址
+      url: "/new_banner/banners/",  // url尾部需要添加/
+      // 请求方式
+      type: "GET",
+      async: false
+    })
+      .done(function (res) {
+        if (res.errno === "0") {
+          let content = ``;
+          let tab_content = ``;   //按钮
+          res.data.banners.forEach(function (one_banner, index) {
+            if (index === 0){
+              // 需要修改 href  接收后台传来的id号 响应详情页  one_banner.news_id
+              content = `
+                <li style="display:block;"><a href="/new/${one_banner.news_id}/">
+                 <img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+              `;
+              tab_content = `<li class="active"></li>`;
+            } else {
+              content = `
+              <li><a href="/new/${one_banner.news_id}/"><img src="${one_banner.image_url}" alt="${one_banner.news_title}"></a></li>
+              `;
+              tab_content = `<li></li>`;
+            }
+
+            $(".pic").append(content);  // 内容
+            $(".tab").append(tab_content); // 标签
+          });
+
+        } else {
+          // 登录失败，打印错误信息
+          message.showError(res.errmsg);
+        }
+      })
+      .fail(function () {
+        message.showError('服务器超时，请重试！');
+      });
+  }
+>>>>>>> news
 
 
 

@@ -143,15 +143,16 @@
 }
 .hot-news-list .hot-news-contain {
     display: block;
-    padding: 20px 0;
+    padding: 15px 0;
 }
 .hot-news-list .hot-news-contain .hot-news-thumbnail {
     width: 100px;
-    height: 70px;
+    height: 120px;
     float: right;
 }
 .hot-news-contain .hot-news-thumbnail img {
     width: 100%;
+    height: 100%;
 }
 .hot-news-contain  .hot-news-content {
     width: 63%;
@@ -176,9 +177,11 @@
     float: left;
     color: #5b86db;
     line-height: 14px;
+    padding-top: 20px;
 }
 .hot-news-content .hot-news-other .news-pub-time {
     float: right;
+    padding-top: 20px;
 }
 .hot-news-content .hot-news-other .news-author {
     float: right;
