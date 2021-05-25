@@ -13,27 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path,re_path,include
-<<<<<<< HEAD
+from django.urls import re_path
+from . import views
 
-=======
-from django.views.static import serve
-
-from dj31.settings import dev
->>>>>>> news
-from . import  views
-
-app_name='users'
+app_name = 'users'
 urlpatterns = [
-    re_path('register/',views.RegisView.as_view(),name='register'),
-    re_path('login/',views.LoginView.as_view(),name='login'),
-    re_path('logout/',views.LogoutView.as_view(),name='logout'),
-    re_path('check_pwd/',views.CheckPwd.as_view(),name='check_pwd'),
-    re_path('c_pwd/',views.Passwd.as_view(),name='c_pwd'),
-<<<<<<< HEAD
+    re_path('register/', views.RegisView.as_view(), name='register'),
+    re_path('login/', views.LoginView.as_view(), name='login'),
+    re_path('logout/', views.LogoutView.as_view(), name='logout'),
+    re_path('check_pwd/', views.CheckPwd.as_view(), name='check_pwd'),
+    re_path('c_pwd/', views.Passwd.as_view(), name='c_pwd'),
 
-=======
-    # re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT})
->>>>>>> news
-
-    ]
+]

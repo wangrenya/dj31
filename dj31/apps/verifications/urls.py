@@ -1,16 +1,6 @@
-<<<<<<< HEAD
-from django.conf import settings
-from django.contrib.staticfiles.views import serve
-from django.urls import path,re_path
-
-
-=======
-
 from django.urls import path,re_path
 from django.views.static import serve
-
 from dj31.settings import dev
->>>>>>> news
 from . import  views
 
 
@@ -21,11 +11,10 @@ urlpatterns = [
     re_path('mobile/(?P<mobile>1[3-9]\d{9})/', views.CheckMobileView.as_view(), name='check_mobile'),
     re_path('sms_code/', views.SmsCodeView.as_view(), name='sms_code'),
     re_path('news/', views.NewList.as_view(), name='news_list'),
-<<<<<<< HEAD
-=======
+    path('new/<int:news_id>/', views.NewDetail.as_view(), name='n_detail'),
+    re_path('new_banner/banners/', views.BannerView.as_view(), name='banner'),
     re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT}),
 
->>>>>>> news
 
 
 

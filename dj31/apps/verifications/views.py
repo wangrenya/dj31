@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 import http
-
->>>>>>> news
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.shortcuts import render
@@ -20,12 +16,9 @@ import random
 from dj31.utils.response_code import res_json,Code,error_map
 from dj31.utils.yuntongxun.sms import CCP
 from news.models import News
-<<<<<<< HEAD
-=======
 from news.models import Banner
 
 from . import  models
->>>>>>> news
 
 logger = logging.getLogger('django')
 from django.views import View
@@ -132,29 +125,7 @@ class SmsCodeView(View):
         send_sms_code.delay(mobile,sms_code)
         return res_json(errmsg='短信验证码发送成功')
 
-class NewList(View):
-    def get(self,request):
-        '''
-        router:/news/
-        :param request:
-        :return:
-        '''
-        try:
-            tag= int(request.GET.get('tag_id', 0))
-        except Exception as e:
-            logger.error('页面或标签定义错误\n{}'.format(e))
-            tag= 0
-        try:
-            page =int(request.GET.get('page',1))
-        except Exception as e:
-            logger.error('页码错误{}'.format(e))
-            page = 1
-        news_list = News.objects.values('title','digest','image_url','update_time','id').annotate(tag_name=F('tag__name'),author=F('author__username'))
-        news = news_list.filter(tag_id=tag,is_delete=False) or news_list.filter(is_delete=False)
-        #分页
 
-<<<<<<< HEAD
-=======
 # news
 class NewList(View):
     def get(self,request):
@@ -177,7 +148,6 @@ class NewList(View):
         news = news_list.filter(tag_id=tag,is_delete=False) or news_list.filter(is_delete=False)
         #分页
 
->>>>>>> news
         pages =Paginator(news,5)
         try:
             news =pages.page(page)
@@ -189,8 +159,6 @@ class NewList(View):
             'total_pages':pages.num_pages
         }
         return res_json(data=data)
-<<<<<<< HEAD
-=======
 
 class NewDetail(View):
     def  get(self,request,news_id):
@@ -216,4 +184,3 @@ class BannerView(View):
             'banners': banner_info
         }
         return res_json(data=data)
->>>>>>> news
