@@ -1,3 +1,4 @@
+import http
 import logging
 import re
 
@@ -204,5 +205,4 @@ class Passwd(View):
             user.set_password(psd)
             user.save()
             return res_json(errmsg='密码已更新，请回去登录')
-
 

@@ -1,6 +1,9 @@
+import http
+
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.shortcuts import render
+
 
 # Create your views here.
 from django.http import  HttpResponse,JsonResponse
@@ -14,6 +17,9 @@ import random
 from dj31.utils.response_code import res_json,Code,error_map
 from dj31.utils.yuntongxun.sms import CCP
 from news.models import News
+from news.models import Banner
+
+from . import  models
 
 logger = logging.getLogger('django')
 from django.views import View
@@ -120,6 +126,8 @@ class SmsCodeView(View):
         send_sms_code.delay(mobile,sms_code)
         return res_json(errmsg='短信验证码发送成功')
 
+
+# news
 class NewList(View):
     def get(self,request):
         '''
@@ -150,5 +158,30 @@ class NewList(View):
         data={
             'news':list(news),
             'total_pages':pages.num_pages
+        }
+        return res_json(data=data)
+
+class NewDetail(View):
+    def  get(self,request,news_id):
+        news =News.objects.select_related('author','tag').only('author__username','tag__name','title','content').filter(is_delete=False,id=news_id).first()
+        a=news.clicks
+        News.in_clicks(news)
+        if news:
+            return render(request,'news/news_detail.html',context={'news':news})
+        else:
+
+            return http.Http404('PAGE NOT FOUND')
+class BannerView(View):
+    def get(self,request):
+        banner = Banner.objects.select_related('news').only('image_url','news__title').filter(is_delete=False).order_by('priority')
+        banner_info = []
+        for i in banner:
+            banner_info.append({
+                'image_url': i.image_url,
+                'news_title': i.news.title,
+                'news_id': i.news.id
+            })
+        data = {
+            'banners': banner_info
         }
         return res_json(data=data)
