@@ -15,7 +15,7 @@ import random
 
 from dj31.utils.response_code import res_json,Code,error_map
 from dj31.utils.yuntongxun.sms import CCP
-from news.models import News
+from news.models import News, Comments
 from news.models import Banner
 
 from . import  models
@@ -163,10 +163,13 @@ class NewList(View):
 class NewDetail(View):
     def  get(self,request,news_id):
         news =News.objects.select_related('author','tag').only('author__username','tag__name','title','content').filter(is_delete=False,id=news_id).first()
-        a=news.clicks
         News.in_clicks(news)
+        comm =Comments.objects.only('content','author__username','update_time').select_related('author').filter(is_delete=False,news_id=news_id)
+        comm_info =[]
+        for i in comm:
+            comm_info.append(i.to_dict())
         if news:
-            return render(request,'news/news_detail.html',context={'news':news})
+            return render(request,'news/news_detail.html',context={'news':news,'comm':comm_info})
         else:
 
             return http.Http404('PAGE NOT FOUND')
@@ -184,3 +187,54 @@ class BannerView(View):
             'banners': banner_info
         }
         return res_json(data=data)
+#文章评论
+# 追加评论数据
+class CommentsView(View):
+    def post(self,request,news_id):
+        """
+        3 个参数
+        新闻ID  评论内容  父评论ID
+
+        1， 判断用户是否登录
+        2，获取参数
+        3 ，校验参数
+        4， 保存到数据库
+        :param request:
+        :param news_id:
+        :return:
+        """
+        if not request.user.is_authenticated:
+            return res_json(errno=Code.SESSIONERR,errmsg=error_map[Code.SESSIONERR])
+
+        if not News.objects.only('id').filter(is_delete=False,id=news_id).exists():
+            return res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
+
+        # 获取参数
+        json_data = request.body
+        if not json_data:
+            return res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
+
+        dita_data = json.loads(json_data)
+
+        # 一级评论
+        content = dita_data['content']
+        if not dita_data.get('content'):
+            return res_json(errno=Code.PARAMERR,errmsg='评论内容不能为空')
+
+        # 回复评论
+        partent_id = dita_data.get('partent_id')
+        if partent_id:
+            if not Comments.objects.only('id').filter(is_delete=False,id=partent_id,news_id=news_id).exists():
+                return res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
+        # 保存数据库
+        news_content = Comments()
+
+        news_content.content = content
+        print(content)
+        news_content.news_id = news_id
+        print(news_content.news_id)
+        news_content.author = request.user
+        news_content.partent_id = partent_id if partent_id else None
+        print(news_content.partent_id)
+        news_content.save()
+        return res_json(data=news_content.to_dict())

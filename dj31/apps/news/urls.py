@@ -6,4 +6,8 @@ app_name= 'news'
 
 urlpatterns = [
     re_path('',views.IndexView.as_view(),name='index'),
+<<<<<<< HEAD
+=======
+
+>>>>>>> news
 ]
