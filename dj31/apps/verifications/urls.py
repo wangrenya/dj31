@@ -13,10 +13,7 @@ urlpatterns = [
     re_path('news/', views.NewList.as_view(), name='news_list'),
     path('new/<int:news_id>/', views.NewDetail.as_view(), name='n_detail'),
     re_path('new_banner/banners/', views.BannerView.as_view(), name='banner'),
-<<<<<<< HEAD
-=======
-    path('newss/<int:news_id>/comments/', views.CommentsView.as_view(), name='comments'),
->>>>>>> news
+   path('newss/<int:news_id>/comments/', views.CommentsView.as_view(), name='comments'),
     re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT}),
 
 
