@@ -64,7 +64,7 @@
               <div class="comment_time left_float">{{ i.update_time }}</div>
               <a href="javascript:void(0);" class="reply_a_tag right_float">回复</a>
               <form class="reply_form left_float" comment-id="{{ i.content_id }}"
-                      news-id="{{ i.news_id }}">
+                    news-id="{{ i.news_id }}">
                 <textarea class="reply_input"></textarea>
                 <input type="button" value="回复" class="reply_btn right_float">
                 <input type="reset" name="" value="取消" class="reply_cancel right_float">
@@ -81,5 +81,5 @@
 {% endblock %}
 
 {% block script %}
-    <script src="../../static/js/news/news_comm.js"></script>
+    <script src='../../static/js/news/news_comm.js'></script>
 {% endblock %}

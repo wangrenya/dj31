@@ -62,7 +62,7 @@ class Comments(ModelBase):
 
     author = models.ForeignKey('users.Users', on_delete=models.SET_NULL, null=True)
     news = models.ForeignKey('News', on_delete=models.CASCADE)
-
+    partent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     class Meta:
         ordering = ['-update_time', '-id']
         db_table = "tb_comments"  # 指明数据库表名
@@ -73,6 +73,18 @@ class Comments(ModelBase):
 
     def __str__(self):
         return '<评论{}>'.format(self.id)
+    def to_dict(self):
+        comm_dict ={
+            'news_id':self.news_id,
+            'content_id':self.id,
+            'content':self.content,
+            'author':self.author.username,
+            'update_time':self.update_time,
+            'partent':self.partent.to_dict()if self.partent_id else None,
+
+
+        }
+        return comm_dict
 
 
 

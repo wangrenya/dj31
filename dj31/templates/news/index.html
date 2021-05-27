@@ -42,7 +42,7 @@
           <ul class="recommend-news">
               {% for i in hots %}
               <li>
-                  <a href="{% url   'verifications:n_detail' i.news_id %}" target="_blank">
+                  <a href="{% url 'verifications:n_detail' i.news_id %}" target="_blank">
                       <div class="recommend-thumbnail">
                           <img src="{{i.news.image_url }}" alt="title">
                       </div>
@@ -199,9 +199,9 @@
               <h3 class="activities-title">在线课堂<a href="javascript:void(0)">更多</a></h3>
               <div class="activities-img">
                   <a href="javascript:void(0);" target="_blank">
-                      <img src="../../static/images/english.jpg" alt="title">
+                      <video src="https://dj3131.bj.bcebos.com/videoworks/console-upload/2908a873754aff7e2f865439030b810b.mp4?authorization=bce-auth-v1/cebc542a2c474e56952030d4146aca8f/2020-05-28T01:54:00Z/300/host/cc6f7f9f0e57749abbd3c534a543f9f94e8c5a0b4842ccb049013965fa9e7bfb" controls="controls" height="215px" width="320px"></video>
                   </a>
-                  <p class="activities-tips">对话国外小姐姐</p>
+
               </div>
               <ul class="activities-list">
                   <li>

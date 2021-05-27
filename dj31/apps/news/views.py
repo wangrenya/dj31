@@ -16,10 +16,10 @@ from . import models
 # Create your views here.
 class IndexView(View):
     def get(self,request):
-        tag =models.Tag.objects.filter(is_delete=False).only('name')
-        hot =models.HotNews.objects.only('news__image_url','news__title','news_id').select_related('news').filter(is_delete=False).order_by('priority')[0:3]
-        news_click = News.objects.only('title', 'image_url', 'update_time', 'tag__name','author__username').select_related('tag','author').order_by('-clicks')[0:2]
-        return render(request,'news/index.html',context={'tags':tag,'click':news_click,'hots':hot})
+         tag =models.Tag.objects.filter(is_delete=False).only('name')
+         hot =models.HotNews.objects.only('news__image_url','news__title','news_id').select_related('news').filter(is_delete=False).order_by('priority')[0:3]
+         news_click = News.objects.only('title', 'image_url', 'update_time', 'tag__name','author__username').select_related('tag','author').order_by('-clicks')[0:2]
+         return render(request,'news/index.html',context={'tags':tag,'click':news_click,'hots':hot})
 
 
 

@@ -29,10 +29,10 @@ $(function () {
       // 定义发给后端的参数
       let sDataParams = {
         "content": content,
-        "parent_id": parent_id
+        "partent_id": parent_id
       };
       $.ajax({
-        url: "/news/" + news_id + "/comments/",
+        url: "/newss/" + news_id + "/comments/",
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify(sDataParams),
@@ -41,6 +41,7 @@ $(function () {
         .done(function (res) {
           if (res.errno === "0") {
             let one_comment = res.data;
+            console.log(res.data)
             let html_comment = ``;
             html_comment += `
           <li class="comment-item">
@@ -51,10 +52,10 @@ $(function () {
             <div class="comment-content">${one_comment.content}</div>
 
                 <div class="parent_comment_text">
-                  <div class="parent_username">${one_comment.parent.author}</div>
+                  <div class="parent_username">${one_comment.partent.author}</div>
                   <br/>
                   <div class="parent_content_text">
-                    ${one_comment.parent.content}
+                    ${one_comment.partent.content}
                   </div>
                 </div>
 
@@ -97,7 +98,7 @@ $(function () {
   $loginComment.click(function () {
 
     $.ajax({
-      url: "/news/" + $(".please-login-comment").attr('news-id') + "/comments/",
+      url: "/newss/" + $(".please-login-comment").attr('news-id') + "/comments/",
       type: "POST",
       contentType: "application/json; charset=utf-8",
       dataType: "json",
@@ -134,11 +135,10 @@ $(function () {
     }
     // 定义发给后端的参数
     let sDataParams = {
-      "content": content,
-
+      "content": content
     };
     $.ajax({
-      url: "/news/" + news_id + "/comments/",
+      url: "/newss/" + news_id + "/comments/",
       type: "POST",
       contentType: "application/json; charset=utf-8",
       data: JSON.stringify(sDataParams),
@@ -219,5 +219,3 @@ $(function () {
     }
   });
 });
-
-
