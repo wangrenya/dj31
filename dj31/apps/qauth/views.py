@@ -9,3 +9,4 @@ from django.views import  View
 class QQ_login(View):
     def get(self,request):
         return redirect('https://github.com/')
+

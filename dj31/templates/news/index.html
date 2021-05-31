@@ -42,7 +42,7 @@
           <ul class="recommend-news">
               {% for i in hots %}
               <li>
-                  <a href="{% url 'verifications:n_detail' i.news_id %}" target="_blank">
+                  <a href="{% url 'news:n_detail' i.news_id %}" target="_blank">
                       <div class="recommend-thumbnail">
                           <img src="{{i.news.image_url }}" alt="title">
                       </div>
@@ -245,7 +245,7 @@
 
                   {% for i in click %}
                   <li>
-                      <a href="{% url 'verifications:n_detail' i.id%}" class="hot-news-contain clearfix">
+                      <a href="{% url 'news:n_detail' i.id%}" class="hot-news-contain clearfix">
                           <div class="hot-news-thumbnail">
                               <img src="{{i.image_url}}"
                                    alt="">
