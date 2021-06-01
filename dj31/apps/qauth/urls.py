@@ -24,4 +24,5 @@ urlpatterns = [
     re_path('qq_login/',views.QQ_login.as_view(),name='qq_login'),
 
 
+
 ]

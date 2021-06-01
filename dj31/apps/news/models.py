@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 from dj31.utils.models import ModelBase
-
+import pytz
 '''
 1 分类导航  name
 2 轮播图 图片  优先级
@@ -74,12 +74,16 @@ class Comments(ModelBase):
     def __str__(self):
         return '<评论{}>'.format(self.id)
     def to_dict(self):
+        ss = pytz.country_timezones('cn')
+        cn =pytz.timezone(ss[0])
+        new_time=cn.normalize(self.update_time)
+
         comm_dict ={
             'news_id':self.news_id,
             'content_id':self.id,
             'content':self.content,
             'author':self.author.username,
-            'update_time':self.update_time,
+            'update_time':new_time.strftime('%Y年%m月%d日 %H:%M'),
             'partent':self.partent.to_dict()if self.partent_id else None,
 
 

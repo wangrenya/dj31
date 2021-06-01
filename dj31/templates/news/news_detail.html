@@ -51,12 +51,12 @@
             </div>
             <div class="comment-content">{{ i.content }}</div>
 
-              {% if i.parent %}
+              {% if i.partent %}
               <div class="parent_comment_text">
-                <div class="parent_username">{{ i.parent.author }}</div>
+                <div class="parent_username">{{ i.partent.author }}</div>
                 <br/>
                 <div class="parent_content_text">
-                  {{ i.parent.content }}
+                  {{ i.partent.content }}
                 </div>
               </div>
               {% endif %}
