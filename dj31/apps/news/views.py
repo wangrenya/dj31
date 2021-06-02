@@ -130,6 +130,7 @@ class CommentsView(View):
             return res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
 
         dita_data = json.loads(json_data)
+<<<<<<< HEAD
 
         # 一级评论
         content = dita_data['content']
@@ -169,6 +170,54 @@ class Searchs(SearchView):
             except PageNotAnInteger:
                 # 默认返回第一页
                 page = paginator.page(1)
+=======
+
+        # 一级评论
+        content = dita_data['content']
+        if not dita_data.get('content'):
+            return res_json(errno=Code.PARAMERR,errmsg='评论内容不能为空')
+
+        # 回复评论
+        partent_id = dita_data.get('partent_id')
+        if partent_id:
+            if not Comments.objects.only('id').filter(is_delete=False,id=partent_id,news_id=news_id).exists():
+                return res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
+        # 保存数据库
+        news_content = Comments()
+
+        news_content.content = content
+        print(content)
+        news_content.news_id = news_id
+        print(news_content.news_id)
+        news_content.author = request.user
+        news_content.partent_id = partent_id if partent_id else None
+        print(news_content.partent_id)
+        news_content.save()
+        return res_json(data=news_content.to_dict())
+#新闻搜索
+class Searchs(SearchView):
+
+    template = 'news/search.html'
+    def create_response(self):
+        query = self.request.GET.get('q','')
+        if not query :
+            show = True
+            hots_news =models.HotNews.objects.select_related('news').only('news_id','news__title','news__image_url').filter(is_delete=False).order_by('priority')
+            paginator = Paginator(hots_news, 5)
+            try:
+                page = paginator.page(int(self.request.GET.get('page', 1)))
+            # 假如传的不是整数
+            except PageNotAnInteger:
+                # 默认返回第一页
+                page = paginator.page(1)
+
+            except EmptyPage:
+                page = paginator.page(paginator.num_pages)
+            return render(self.request, self.template, locals())
+        else:
+            show = False
+            return super().create_response()
+>>>>>>> courses
 
             except EmptyPage:
                 page = paginator.page(paginator.num_pages)

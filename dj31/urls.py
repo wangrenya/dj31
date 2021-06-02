@@ -10,6 +10,7 @@ urlpatterns = [
     path('',include('verifications.urls')),
     path('',include('qauth.urls')),
     path('',include('news.urls')),
+    path('courses/',include('courses.urls')),
     # re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT}),
 
 ]
