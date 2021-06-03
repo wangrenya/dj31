@@ -21,3 +21,6 @@ class Course_detail(View):
             return render(request,'course/course_detail.html',context={'course':course})
         else:
             raise http.Http404('NOT FOUND PAGE')
+
+
+

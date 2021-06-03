@@ -16,10 +16,6 @@ urlpatterns = [
     re_path('new_banner/banners/', views.BannerView.as_view(), name='banner'),
     path('newss/<int:news_id>/comments/', views.CommentsView.as_view(), name='comments'),
     path('search/', views.Searchs(), name='search'),
-<<<<<<< HEAD
-=======
-
->>>>>>> courses
     re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT})
 
 

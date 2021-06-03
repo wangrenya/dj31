@@ -1,5 +1,4 @@
 "use strict";
-
 // 消息提示框
 function Message() {
   // 判断是否加载

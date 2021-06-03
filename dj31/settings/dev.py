@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'courses',
     'news',
     'users',
     'verifications',
     'docs',
-    'courses',
     'qauth',
     'haystack',
 
@@ -230,3 +230,6 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
 # 当数据库改变时，会自动更新索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# 站点域名和端口配置
+FILE_URL = "http://47.100.67.17:8000"

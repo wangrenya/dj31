@@ -1,4 +1,3 @@
-/*===  navMenuStart ===*/
 $(()=>{
     let $navLi = $('#header .nav .menu li')
     $navLi.click(function(){
