@@ -12,6 +12,7 @@ urlpatterns = [
     path('',include('news.urls')),
     path('courses/',include('courses.urls')),
     path('docs/',include('docs.urls')),
+    path('admin/',include('admin.urls')),
     # re_path('media/(?P<path>.*)/', serve, {'document_root': dev.MEDIA_ROOT}),
 
 ]
