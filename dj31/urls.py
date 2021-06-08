@@ -5,7 +5,6 @@ from django.views.static import serve
 from dj31.settings import dev
 from django.conf import settings
 urlpatterns = [
-    # path('admin/', admin.site.urls),
     path('user/',include('users.urls')),
     path('',include('verifications.urls')),
     path('',include('qauth.urls')),

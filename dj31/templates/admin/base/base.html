@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="../../../static/css/admin/base/AdminLTE.min.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/_all-skins.min.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/morris.css">
+  <link rel="stylesheet" href="../../../static/css/base/sweetalert.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/jquery-jvectormap.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/bootstrap3-wysihtml5.min.css">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -82,7 +83,7 @@
               </li>
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="{% url 'users:login' %}" class="btn btn-default btn-flat">登录</a>
+                  <a href="{% url 'users:logout' %}" class="btn btn-default btn-flat">登录</a>
                 </div>
                 <div class="pull-right">
                   <a href="{% url 'news:index' %}" class="btn btn-default btn-flat">退出</a>
@@ -123,10 +124,10 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li ><a href="#"><i class="fa fa-align-right"></i><span  style="color: #00a65a">文章管理</span></a></li>
+            <li ><a href=""><i class="fa fa-align-right"></i><span  style="color: #00a65a">文章管理</span></a></li>
             <li><a href="#"><i class="fa fa-hand-o-up" ></i> <span style="color: #0b58a2">文章发布</span></a></li>
             <li><a href="#"><i class="fa fa-sun-o" ></i><span style="color:blueviolet">热门新闻</span></a></li>
-            <li><a href="#"><i class="fa  fa-server" ></i><span style="color:red">文章分类</span> </a></li>
+            <li><a href="{% url 'admin:Tag' %}"><i class="fa  fa-server" ></i><span style="color:red">文章分类</span> </a></li>
             <li><a href="#"><i class="fa  fa-image (alias)"></i><span style="color:yellow;">轮播图</span> </a></li>
           </ul>
           </li>
@@ -224,11 +225,14 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button);
 </script>
+
+
+{%block script%}
+{%endblock %}
 <!-- Bootstrap 3.3.7 -->
 <script src="../../../static/js/admin/base/bootstrap.min.js"></script>
 <!-- Morris.js charts -->
-
 <script src="../../../static/js/admin/base/adminlte.min.js"></script>
->
+
 </body>
 </html>

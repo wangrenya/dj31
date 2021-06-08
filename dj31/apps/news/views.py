@@ -15,21 +15,13 @@ from dj31.utils.response_code import res_json, Code, error_map
 from .models import News, Banner, Comments
 
 logger = logging.getLogger('django')
+from qauth.views import login_req
 
 from . import models
 from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-# 登录装饰器
-def login_req(f):
-    def func(request):
-        if request.user.is_authenticated:
-            return f(request)
-        else:
-            return redirect('/user/login/')
-
-    return func
 
 @login_req
 def index(request):

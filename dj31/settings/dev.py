@@ -233,3 +233,6 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 # 站点域名和端口配置
 FILE_URL = "http://47.100.67.17:8000"
+
+#ip 池
+IP_PULL ={}

@@ -9,6 +9,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
+from qauth.views import func
+from qauth.views import blacks
+from django.utils.decorators import method_decorator
 
 from news.models import News
 
@@ -97,6 +100,8 @@ class RegisView(View):
         return res_json(errno=Code.OK,errmsg='恭喜贵宾你注册成功')
 
 
+@method_decorator(blacks,name='dispatch')
+@method_decorator(func,name='dispatch')
 class LoginView(View):
     def get(self,request):
         return render(request,'users/login.html')
@@ -105,7 +110,6 @@ class LoginView(View):
         if not js_str:
             return res_json(errno=Code.PARAMERR,errmsg='参数错误')
         dict_data= json.loads(js_str.decode())
-
         #数据验证
         form = LoginForm(data=dict_data,request=request)
         if form.is_valid():
