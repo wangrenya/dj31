@@ -13,6 +13,7 @@ params_status= res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
 @login_req
 def admin(request):
     return render(request,'admin/news/index.html')
+#文章管理
 @method_decorator(login_req,name='dispatch')
 class TagMangae(View):
     def get(self,request):
