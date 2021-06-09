@@ -67,7 +67,7 @@ $(function () {
 
         $.ajax({
           // 请求地址
-          url: "/admin/tags/" + sTagId + "/",  // url尾部需要添加/
+          url: "/admin/tagss/" + sTagId + "/",  // url尾部需要添加/
           // 请求方式
           type: "PUT",
           data: JSON.stringify(sDataParams),
@@ -109,7 +109,7 @@ $(function () {
 
         $.ajax({
           // 请求地址
-          url: "/admin/tags/" + sTagId + "/",  // url尾部需要添加/
+          url: "/admin/tagss/" + sTagId + "/",  // url尾部需要添加/
           // 请求方式
           type: "DELETE",
           dataType: "json",
