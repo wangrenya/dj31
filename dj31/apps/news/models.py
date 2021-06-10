@@ -97,8 +97,13 @@ class Comments(ModelBase):
 class HotNews(ModelBase):
     """
     """
+    P_CHOICES = [
+        (1, '第一级'),
+        (2, '第二级'),
+        (3, '第三级'),
+    ]
     news = models.OneToOneField('News', on_delete=models.CASCADE)
-    priority = models.IntegerField(verbose_name="优先级", help_text="优先级")
+    priority = models.IntegerField(verbose_name="优先级", help_text="优先级",choices=P_CHOICES)
 
     class Meta:
         ordering = ['-update_time', '-id']
