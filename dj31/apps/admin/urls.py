@@ -10,7 +10,7 @@ urlpatterns = [
   path('hotnewss/<int:h_id>/',views.HotManage.as_view(),name='hotsnews_edit'),
   re_path('hotsnew/add/',views.HotAddView.as_view(),name='hotsnews_add'),
   path('tags/<int:t_id>/newss/', views.NewsByTagIdView.as_view(), name='news_by_tagid'),
-
+  path('newsmanage/', views.NewsManage.as_view(), name='news_manage'),
   path('',views.admin,name='admin'),
 
 

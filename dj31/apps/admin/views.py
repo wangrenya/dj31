@@ -1,6 +1,12 @@
+
 import json
 import logging
 from collections import OrderedDict
+from datetime import datetime
+from urllib.parse import urlencode
+
+from .paginator import get_page_data
+from django.core.paginator import Paginator, EmptyPage
 
 logger = logging.getLogger('django')
 from django.db.models import Count
@@ -102,13 +108,12 @@ class HotManage(View):
             return res_json(errmsg="热门文章删除成功")
         else:
             return res_json(errno=Code.PARAMERR, errmsg="需要删除的热门文章不存在")
+#热门新闻添加
 @method_decorator(login_req,name='get')
 class HotAddView(View):
     def get(self,request):
-
         tags = models.Tag.objects.values('id', 'name').annotate(num_news=Count('news')). \
         filter(is_delete=False).order_by('-num_news', 'update_time')
-        print(tags)
         # 优先级列表
         # priority_list = {K: v for k, v in models.HotNews.PRI_CHOICES}
         priority_dict = OrderedDict(models.HotNews.P_CHOICES)
@@ -156,3 +161,77 @@ class NewsByTagIdView(View):
         return res_json(data={
             'news': news_list
         })
+#文章管理
+class NewsManage(View):
+    def get(self,request):
+        '''
+        时间、标题、分类
+        '''
+        #时间处理
+        start_time=request.GET.get('start_time','')
+        start_time=datetime.strptime(start_time,'%Y/%m/%d') if start_time else''
+        end_time=request.GET.get('end_time','')
+        end_time = datetime.strptime(end_time, '%Y/%m/%d') if end_time else''
+        newses =models.News.objects.only('title','author__username','tag__name','update_time').filter(is_delete=False)
+        if start_time and not end_time:
+            newses=newses.filter(update_time__gte=start_time)
+        if end_time and not start_time:
+            newses=newses.filter(update_time__lte=end_time)
+        if start_time and end_time:
+            newses=newses.filter(update_time__range=(start_time,end_time))
+         #标题处理
+        title =request.GET.get('title')
+        if title:
+            newses=newses.filter(title__icontains=title)
+        #作者处理
+        author_name=request.GET.get('author_name')
+        if author_name:
+            newses=newses.filter(author__username__icontains=author_name)
+        #处理分类
+        tags=models.Tag.objects.only('name').filter(is_delete=False)
+        tag_id=request.GET.get('tag_id',0)
+        newses=newses.filter(is_delete=False,tag_id=tag_id)  or newses.filter(is_delete=False)
+        #处理分页
+        try:
+            page = int(request.GET.get('page', 1))
+        except Exception as e:
+            logger.info('页面错误')
+            page = 1
+
+        pt = Paginator(newses, 6)
+        try:
+            news_info = pt.page(page)
+        except EmptyPage:
+            logger.info('页码错误')
+            news_info = pt.page(pt.num_pages)
+        # 自定义分页器
+        pages_data = get_page_data(pt, news_info)
+        # 把日期格式转 字符串格式
+        start_time = start_time.strftime('%Y/%m/%d') if start_time else ''
+        end_time = end_time.strftime('%Y/%m/%d') if end_time else ''
+
+        data = {
+            'news_info': news_info,
+            'tags': tags,
+            'paginator': pt,
+            'start_time': start_time,
+            'end_time': end_time,
+            'title': title,
+            'author_name': author_name,
+            'tag_id': tag_id,
+            'other_param': urlencode({
+                'start_time': start_time,
+                'end_time': end_time,
+                'title': title,
+                'author_name': author_name,
+                'tag_id': tag_id,
+
+            })
+        }
+        data.update(pages_data)
+
+        return render(request, 'admin/news/news_manage.html', context=data)
+
+
+
+
