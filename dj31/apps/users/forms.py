@@ -56,3 +56,6 @@ class LoginForm(forms.Form):
             raise forms.ValidationError('用户名不存在，请重新输入！')
 
         return cleaned_data
+
+
+

@@ -43,7 +43,7 @@ $(function () {
 
       $.ajax({
         // 请求地址
-        url: "/admin/news/" + sNewsId + "/",  // url尾部需要添加/
+        url: "/admin/newsmanage/" + sNewsId + "/",  // url尾部需要添加/
         // 请求方式
         type: "DELETE",
         dataType: "json",
@@ -64,7 +64,7 @@ $(function () {
           }
         })
         .fail(function () {
-          message.showError('服务器超时，请重试！');
+          message.showError('服务器超时，。。。。。。。。。。！');
         });
     });
 

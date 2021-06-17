@@ -33,6 +33,10 @@
             <label for="news-select" style="display: none;"></label>
             <select name="news" class="form-control input-md" id="news-select">
               <option value="0">--请选择文章--</option>
+                 {% for one_news in news %}
+                <option value="{{ one_news.id }}">{{ one_news.digest }}</option>
+              {% endfor %}
+
             </select>
           </div>
         </div>

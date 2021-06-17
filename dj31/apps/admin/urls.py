@@ -7,10 +7,20 @@ urlpatterns = [
   path('tagss/<int:tag_id>/',views.TagMangae.as_view(),name='Tag_put'),
   path('tags/',views.TagMangae.as_view(),name='Tag'),
   path('HotNews/',views.HotManage.as_view(),name='HotManage'),
-  path('hotnewss/<int:h_id>/',views.HotManage.as_view(),name='hotsnews_edit'),
+  path('hotnewss/<int:t_id>/',views.HotManage.as_view(),name='hotsnews_edit'),
   re_path('hotsnew/add/',views.HotAddView.as_view(),name='hotsnews_add'),
   path('tags/<int:t_id>/newss/', views.NewsByTagIdView.as_view(), name='news_by_tagid'),
   path('newsmanage/', views.NewsManage.as_view(), name='news_manage'),
+  path('newsmanage/<int:t_id>/', views.NewsManage.as_view(), name='news_d' ),
+  path('newsedit/<int:e_id>/', views.NewsEdit.as_view(), name='news_edit'),
+  path('newsedit/pub/',views.NewsPub.as_view(),name='news_pub'),
+  path('newsedit/images/', views.Up_Image_Server.as_view(), name='news_up'),
+  path('markdown/', views.MakeDown.as_view(), name='news_down'),
+  path('banners/', views.BannerView.as_view(), name='news_banners'),
+  path('banners/add/', views.Banneradd.as_view(), name='news_banners_add'),
+  path('banners/<int:b_id>/', views.BannerView.as_view(), name='banner_edit'),
+  path('banner/<int:t_id>/', views.Banneradd.as_view(), name='banner_add_d'),
+
   path('',views.admin,name='admin'),
 
 

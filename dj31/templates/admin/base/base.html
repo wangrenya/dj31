@@ -8,7 +8,7 @@
       {% endblock %}
   </title>
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  {% block link %}
+
   <link rel="stylesheet" href="../../../static/css/admin/base/bootstrap.min.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/font-awesome.min.css">
   <link rel="stylesheet" href="../../../static/css/admin/base/ionicons.min.css">
@@ -26,6 +26,7 @@
   <![endif]-->
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+{% block link %}
   {% endblock %}
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -125,10 +126,10 @@
           </a>
           <ul class="treeview-menu">
             <li ><a href="{% url 'admin:news_manage' %}"><i class="fa fa-align-right"></i><span  style="color: #00a65a">文章管理</span></a></li>
-            <li><a href="#"><i class="fa fa-hand-o-up" ></i> <span style="color: #0b58a2">文章发布</span></a></li>
+            <li><a href="{% url 'admin:news_pub' %}"><i class="fa fa-hand-o-up" ></i> <span style="color: #0b58a2">文章发布</span></a></li>
             <li><a href="{% url 'admin:HotManage' %}"><i class="fa fa-sun-o" ></i><span style="color:blueviolet">热门文章</span></a></li>
             <li><a href="{% url 'admin:Tag' %}"><i class="fa  fa-server" ></i><span style="color:red">文章分类</span> </a></li>
-            <li><a href="#"><i class="fa  fa-image (alias)"></i><span style="color:yellow;">轮播图</span> </a></li>
+            <li><a href="{% url 'admin:news_banners' %}"><i class="fa  fa-image (alias)"></i><span style="color:yellow;">轮播图</span> </a></li>
           </ul>
           </li>
 

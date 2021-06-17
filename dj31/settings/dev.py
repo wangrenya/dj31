@@ -236,3 +236,11 @@ FILE_URL = "http://47.100.67.17:8000"
 
 #ip 池
 IP_PULL ={}
+
+
+#分布式文件存储配置
+# FastDFS
+FDFS_URL = 'http://47.100.67.17:8888/'
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
+
+
