@@ -5,6 +5,7 @@ from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import urlencode
 from .Forms import NewsPubForm
+from .Forms import DocsPubForm
 from django import http
 
 from dj31.settings import dev
@@ -16,7 +17,9 @@ logger = logging.getLogger('django')
 from django.db.models import Count
 from django.shortcuts import render
 from django.views import View
-from news  import models
+from news import models
+from docs import models as model
+
 
 #new view 也是引用 qauth view 里面--装饰器
 from news.views import login_req
@@ -167,6 +170,7 @@ class NewsByTagIdView(View):
             'news': news_list
         })
 #文章管理
+@method_decorator(login_req,name='get')
 class NewsManage(View):
     def get(self,request):
         '''
@@ -252,6 +256,7 @@ class NewsManage(View):
 
 
 #文章编辑
+
 class NewsEdit(View):
     def get(self,request,e_id):
         news= models.News.objects.filter(id=e_id,is_delete=False).first()
@@ -292,6 +297,7 @@ class NewsEdit(View):
             err_msg_str = '/'.join(err_m_l)
             return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)
 #文章发布
+@method_decorator(login_req,name='get')
 class NewsPub(View):
     def get(self,request):
 
@@ -320,10 +326,6 @@ class NewsPub(View):
             newss.author_id = request.user.id
             newss.tag_id=dict_data.get('tag')
             newss.image_url=dict_data.get('image_url')
-
-
-
-            print(1)
             newss.save()
             return res_json(errmsg='文章发布成功')
 
@@ -337,25 +339,33 @@ class NewsPub(View):
 #上传图片到服务器
 class Up_Image_Server(View):
     def post(self,request):
+        '''图片是image_files 文档  test_files'''
         name = request.FILES
-        image_file = name.get('image_files')
-        if image_file.content_type not in ('image/jpeg','image/gif','image/png'):
-            return res_json(errno=Code.PARAMERR,errmsg='不能传非图片文件')
-        # 上传到dfs
+        image_file = name.get('image_files')  if name.get('image_files')  else name.get('text_files')
+        if name.get('image_files'):
+            if image_file.content_type not in ('image/jpeg', 'image/png', 'image/gif'):
+                return res_json(errno=Code.PARAMERR,errmsg='不能传非图片文件')
+        if name.get('text_files'):
+            if image_file.content_type not in ('application/zip','application/pdf','text/plain'):
+                return  res_json(errno=Code.PARAMERR,errmsg='不能传非文档文件')
+        # 上传到dfs  ipg  pdf
         ext_name = image_file.name.split('.')[-1]  # jpg
         try:
             upload_img = FDFS_Client.upload_by_buffer(image_file.read(),file_ext_name=ext_name)
         except Exception as e:
-            logger.error('图片上传失败{}'.format(e))
-            return res_json(errno=Code.UNKOWNERR,errmsg='图片上传失败')
+            logger.error('文件上传失败{}'.format(e))
+            return res_json(errno=Code.UNKOWNERR,errmsg='文件上传失败')
         # 响应
         else:
             if upload_img.get('Status') != 'Upload successed.':
-                return res_json(errno=Code.UNKOWNERR,errmsg='图片上传失败')
+                return res_json(errno=Code.UNKOWNERR,errmsg='文件上传失败')
             else:
                 img_id = upload_img.get('Remote file_id')
                 img_url = dev.FDFS_URL + img_id  #  拼接地址
-                return res_json(data={'image_url':img_url},errmsg='图片上传成功')
+                if name.get('image_files'):
+                    return res_json(data={'image_url':img_url},errmsg='图片上传成功')
+                else:
+                    return  res_json(data={'text_url':img_url},errmsg='文档上传成功')
 #富文本上传
 class MakeDown(View):
     def post(self, request):
@@ -490,3 +500,78 @@ class Banneradd(View):
             return res_json(errmsg='轮播图删除成功')
         else:
             return res_json(errno=Code.DATAEXIST, errmsg='删除轮播图不存在未知的错误存在')
+
+
+#文档管理
+class DocsManage(View):
+    def get(self,request):
+        docs=model.Doc.objects.only('id','title','create_time').filter(is_delete=False)
+        return render(request,'admin/docs/docs_manage.html',context={'docs':docs})
+
+
+#文章编辑
+class DocEditView(View):
+    def get(self,request,d_id):
+        doc = model.Doc.objects.filter(is_delete=False,id=d_id).first()
+        if doc:
+            return render(request,'admin/docs/docs_pub.html',locals())
+        else:
+            return http.HttpResponseNotFound('PAGE NOT FOUND')
+    def put(self,request,d_id):
+        docs = model.Doc.objects.filter(is_delete=False, id=d_id).first()
+        if not docs:
+            return res_json(errno=Code.PARAMERR,errmsg='参数错误')
+
+        js_str=request.body
+        dict_data=json.loads(js_str)
+        if (docs.title==dict_data.get('title') and  docs.desc==dict_data.get('desc') and docs.file_url==dict_data.get('file_url')  and docs.image_url==dict_data.get('image_url')):
+            return res_json(errno=Code.PARAMERR,errmsg='文档未修改')
+        form = DocsPubForm(dict_data)
+        if form.is_valid():
+            for k,v in form.cleaned_data.items():
+                setattr(docs,k,v)
+            docs.save()
+            return res_json(errmsg='文档更新成功')
+        else:
+            err_m_l = []
+            for i in form.errors.values():
+                err_m_l.append(i[0])
+            err_msg_str = '/'.join(err_m_l)
+            return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)
+    def delete(self,request,d_id):
+        doc = model.Doc.objects.filter(is_delete=False, id=d_id).first()
+        if not doc:
+            return res_json(Code.PARAMERR,'参数错误')
+        doc.is_delete=True
+        doc.save(update_fields=['is_delete'])
+        return res_json(errmsg='文档删除成功')
+
+
+
+
+#文档发布
+class DocsPub(View):
+    def get(self,request):
+        return render(request,'admin/docs/docs_pub.html')
+
+    def post(self, request):
+
+
+        js_str = request.body
+        if not  js_str:
+            return res_json(errno=Code.PARAMERR,errmsg='参数错误')
+
+        dict_data = json.loads(js_str.decode('utf8'))
+        form = DocsPubForm(data=dict_data)
+        if form.is_valid():
+            docs_instance = form.save(commit=False)
+            docs_instance.author_id = request.user.id
+            docs_instance.save()
+            return res_json(errmsg='文档创建成功')
+        else:
+            # 定义一个错误信息列表
+            err_msg_list = []
+            for item in form.errors.get_json_data().values():
+                err_msg_list.append(item[0].get('message'))
+            err_msg_str = '/'.join(err_msg_list)  # 拼接错误信息为一个字符串
+            return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)

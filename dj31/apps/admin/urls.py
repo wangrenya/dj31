@@ -20,6 +20,9 @@ urlpatterns = [
   path('banners/add/', views.Banneradd.as_view(), name='news_banners_add'),
   path('banners/<int:b_id>/', views.BannerView.as_view(), name='banner_edit'),
   path('banner/<int:t_id>/', views.Banneradd.as_view(), name='banner_add_d'),
+  path('docs/', views.DocsManage.as_view(), name='doc_manage'),
+  path('docs/<int:d_id>/', views.DocEditView.as_view(), name='doc_edit'),
+  path('docs/pub/', views.DocsPub.as_view(), name='docs_pub'),
 
   path('',views.admin,name='admin'),
 

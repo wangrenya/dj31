@@ -122,7 +122,7 @@ $(function () {
           } else {
               message.showSuccess("文章添加成功");
               setTimeout(function () {
-                window.location.reload();
+              window.location.href='/admin/newsmanage/';
                 }, 1000)
           }
 
