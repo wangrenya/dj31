@@ -6,6 +6,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from .Forms import NewsPubForm
 from .Forms import DocsPubForm
+from .Forms import CoursePubForm
 from django import http
 
 from dj31.settings import dev
@@ -19,8 +20,7 @@ from django.shortcuts import render
 from django.views import View
 from news import models
 from docs import models as model
-
-
+from courses import models as mode
 #new view 也是引用 qauth view 里面--装饰器
 from news.views import login_req
 from dj31.utils.response_code import Code,res_json,error_map
@@ -30,6 +30,7 @@ params_status= res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
 @login_req
 def admin(request):
     return render(request,'admin/news/index.html')
+
 #文章管理
 @method_decorator(login_req,name='get')
 class TagMangae(View):
@@ -77,6 +78,7 @@ class TagMangae(View):
              return res_json(errmsg="标签更新成功")
          else:
              return res_json(errno=Code.PARAMERR, errmsg="需要删除的标签不存在")
+
 @method_decorator(login_req,name='get')
 class HotManage(View):
     def get(self,request):
@@ -116,6 +118,7 @@ class HotManage(View):
             return res_json(errmsg="热门文章删除成功")
         else:
             return res_json(errno=Code.PARAMERR, errmsg="需要删除的热门文章不存在")
+
 #热门新闻添加
 @method_decorator(login_req,name='get')
 class HotAddView(View):
@@ -158,6 +161,7 @@ class HotAddView(View):
         hotnews.priority = priority  # 修改优先级
         hotnews.save(update_fields=['priority'])
         return res_json(errmsg="热门文章创建成功")
+
 class NewsByTagIdView(View):
     """
     route: /admin/tags/<int:tag_id>/news/
@@ -169,6 +173,7 @@ class NewsByTagIdView(View):
         return res_json(data={
             'news': news_list
         })
+
 #文章管理
 @method_decorator(login_req,name='get')
 class NewsManage(View):
@@ -253,10 +258,7 @@ class NewsManage(View):
         else:
          return res_json(errno=Code.DATAEXIST, errmsg='删除文章不存在未知的错误存在')
 
-
-
 #文章编辑
-
 class NewsEdit(View):
     def get(self,request,e_id):
         news= models.News.objects.filter(id=e_id,is_delete=False).first()
@@ -279,8 +281,11 @@ class NewsEdit(View):
         if not js_str:
             return res_json(errno=Code.PARAMERR, errmsg='参数错误')
         dict_data = json.loads(js_str)
+        if (news.title==dict_data.get('title')and news.digest==dict_data.get('digest')  and news.image_url==dict_data.get('image_url')  ):
+            return res_json(errno=Code.PARAMERR,errmsg='文章未做任何更新修改')
         # 清洗数据
         form = NewsPubForm(data=dict_data)
+
 
         if form.is_valid():  # True False
             news.title = form.cleaned_data.get('title')
@@ -292,6 +297,7 @@ class NewsEdit(View):
             return res_json(errmsg='文章更新成功')
         else:
             err_m_l = []
+            print(1)
             for i in form.errors.values():
                 err_m_l.append(i[0])
             err_msg_str = '/'.join(err_m_l)
@@ -366,6 +372,7 @@ class Up_Image_Server(View):
                     return res_json(data={'image_url':img_url},errmsg='图片上传成功')
                 else:
                     return  res_json(data={'text_url':img_url},errmsg='文档上传成功')
+
 #富文本上传
 class MakeDown(View):
     def post(self, request):
@@ -501,13 +508,11 @@ class Banneradd(View):
         else:
             return res_json(errno=Code.DATAEXIST, errmsg='删除轮播图不存在未知的错误存在')
 
-
 #文档管理
 class DocsManage(View):
     def get(self,request):
         docs=model.Doc.objects.only('id','title','create_time').filter(is_delete=False)
         return render(request,'admin/docs/docs_manage.html',context={'docs':docs})
-
 
 #文章编辑
 class DocEditView(View):
@@ -546,9 +551,6 @@ class DocEditView(View):
         doc.save(update_fields=['is_delete'])
         return res_json(errmsg='文档删除成功')
 
-
-
-
 #文档发布
 class DocsPub(View):
     def get(self,request):
@@ -574,4 +576,94 @@ class DocsPub(View):
             for item in form.errors.get_json_data().values():
                 err_msg_list.append(item[0].get('message'))
             err_msg_str = '/'.join(err_msg_list)  # 拼接错误信息为一个字符串
+            return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)
+
+#在线课程管理
+class Coursemanage(View):
+    def get(self,request):
+        courses=mode.Course.objects.only('title','category__name','teacher__name').select_related('teacher','category').filter(is_delete=False)
+        return render(request,'admin/courses/course_manage.html' ,context={'courses':courses})
+
+class CoursEdit(View):
+    def get(self, request,c_id):
+        course=mode.Course.objects.only('title').filter(id=c_id,is_delete=False).first()
+        if course:
+         teachers=mode.Teacher.objects.only('name').filter(is_delete=False)
+         categories=mode.CourseCategory.objects.only('name').filter(is_delete=False)
+         return render(request, 'admin/courses/course_edit.html',context={'course':course,'teachers':teachers,'categories':categories})
+        else:
+            return res_json(errno=Code.PARAMERR,errmsg='参数错误')
+    def put(self,request,c_id):
+        course =mode.Course.objects.filter(id=c_id,is_delete=False).first()
+        c=mode.Course.objects.values('teacher').filter(id=c_id).first()
+        if not course:
+            return res_json(errno=Code.PARAMERR,errmsg='参数错误')
+        js_str=request.body
+        if not js_str:
+            return res_json(errno=Code.PARAMERR, errmsg=error_map[Code.PARAMERR])
+        dict_data =json.loads(js_str.decode('utf8'))
+
+        t_id=   dict_data.get('teacher')
+        d_id=  dict_data.get('category')
+        teacher_data=mode.Teacher.objects.filter(id=t_id,is_delete=False).first()
+        course_data =mode.CourseCategory.objects.filter(id=d_id,is_delete=False).first()
+
+        if (course.title==dict_data.get('title')and course.category==course_data  and course.teacher==teacher_data and  course.cover_url==dict_data.get('cover_url') and course.video_url==dict_data.get('video_url')  and course.outline==dict_data.get('outline')and course.profile==dict_data.get('profile')):
+            return res_json(errno=Code.PARAMERR,errmsg='课程未修改')
+        form =CoursePubForm(dict_data)
+        if form.is_valid():
+            for k, v in form.cleaned_data.items():
+                setattr(course,k,v)
+            course.save()
+            return res_json(errmsg='课程更新成功')
+
+        else:
+            err_m_l = []
+            for i in form.errors.values():
+                err_m_l.append(i[0])
+            err_msg_str = '/'.join(err_m_l)
+            return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)
+
+    def delete(self,request,c_id):
+        course=mode.Course.objects.filter(id=c_id,is_delete=False).first()
+        if not course:
+            return res_json(errno=Code.DATAEXIST,errmsg='参数错误')
+        course.is_delete=True
+        course.save(update_fields=['is_delete'])
+        return res_json(errmsg='删除课程成功')
+
+
+
+
+
+class CoursePubView(View):
+    def get(self, request):
+        teachers = mode.Teacher.objects.only('name').filter(is_delete=False)
+        categories = mode.CourseCategory.objects.only('name').filter(is_delete=False)
+        return render(request, 'admin/courses/course_edit.html', locals())
+    def post(self,request):
+        js_str=request.body
+        if  not js_str:
+            return res_json(errno=Code.DATAEXIST,errmsg='数据错误')
+        dict_data=json.loads(js_str.decode('utf8'))
+        form=CoursePubForm(dict_data)
+        if form.is_valid():
+            course_instance=form.save(commit=False)
+
+            course_instance.title=dict_data.get('title')
+            course_instance.profile=dict_data.get('profile')
+            course_instance.cover_url=dict_data.get('cover_url')
+            course_instance.video_url=dict_data.get('video_url')
+            course_instance.outline=dict_data.get('outline')
+            course_instance.teacher_id=dict_data.get('teacher')
+            course_instance.category_id=dict_data.get('category')
+
+            course_instance.save()
+            return res_json(errmsg='课程创建成功')
+
+        else:
+            err_m_l = []
+            for i in form.errors.values():
+                err_m_l.append(i[0])
+            err_msg_str = '/'.join(err_m_l)
             return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)

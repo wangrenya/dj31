@@ -1,6 +1,7 @@
 from django import forms
 from news.models import Tag ,News
 from docs.models import Doc
+from courses.models import Course
 
 #后台文章验证
 class NewsPubForm(forms.ModelForm):
@@ -11,7 +12,7 @@ class NewsPubForm(forms.ModelForm):
     class Meta:
         model = News
         # 指明字段
-        fields = ['title','digest','content']
+        fields = ['title','digest','content','image_url']
         error_messages = {
             'title':{
                 'max_length':'文章标题长度不能低于150',
@@ -25,6 +26,9 @@ class NewsPubForm(forms.ModelForm):
             },
             'content':{
                 'required': '文本内容不能为空'
+            },
+            'image_url': {
+                'required': 'url内容不能为空'
             },
         }
 #后台文章验证
@@ -50,5 +54,37 @@ class DocsPubForm(forms.ModelForm):
             },
             'desc': {
                 'required': '文档描述不能为空',
+            },
+        }
+
+
+class CoursePubForm(forms.ModelForm):
+    """
+    """
+    cover_url = forms.URLField(label='视频缩略图url',
+                               error_messages={"required": "视频图片url不能为空"})
+
+    video_url = forms.URLField(label='视频地址url',
+                               error_messages={"required": "视频地址url不能为空"})
+
+    class Meta:
+        model = Course  # 与数据库模型关联
+        # 需要关联的字段
+        # exclude 排除
+        fields = ['title', 'cover_url', 'video_url', 'outline']
+        error_messages = {
+            'title': {
+                'max_length': "课程标题长度不能超过20",
+                'min_length': "课程标题长度大于1",
+                'required': '文档标题不能为空',
+            },
+            'cover_url': {
+                'required': '课程描述不能为空',
+            },
+            'video_url': {
+                'required': '课程描述不能为空',
+            },
+            'outline': {
+                'required': '课程描述不能为空',
             },
         }

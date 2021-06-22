@@ -23,7 +23,9 @@ urlpatterns = [
   path('docs/', views.DocsManage.as_view(), name='doc_manage'),
   path('docs/<int:d_id>/', views.DocEditView.as_view(), name='doc_edit'),
   path('docs/pub/', views.DocsPub.as_view(), name='docs_pub'),
-
+  path('courses/', views.Coursemanage.as_view(), name='course_manage'),
+  path('courses/pub/', views.CoursePubView.as_view(), name='course_pub'),
+  path('courses/<int:c_id>/', views.CoursEdit.as_view(), name='course_edit'),
   path('',views.admin,name='admin'),
 
 
