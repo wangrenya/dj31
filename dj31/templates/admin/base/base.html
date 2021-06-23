@@ -170,8 +170,8 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li><a style="color: red" href=""><i class="fa fa-circle-o"></i> 组管理</a></li>
-            <li><a style="color:rebeccapurple;" href=""><i class="fa fa-circle-o"></i> 权限创建</a></li>
+            <li><a style="color: red" href="{% url 'admin:groups_manage' %}"><i class="fa fa-circle-o"></i> 组管理</a></li>
+            <li><a style="color:rebeccapurple;" href="{% url 'admin:g_add' %}"><i class="fa fa-circle-o"></i> 权限创建</a></li>
             <li><a  style="color: #6fa026" href=""><i class="fa fa-circle-o"></i> 用户管理</a></li>
 
           </ul>

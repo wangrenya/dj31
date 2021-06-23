@@ -8,6 +8,7 @@ from .Forms import NewsPubForm
 from .Forms import DocsPubForm
 from .Forms import CoursePubForm
 from django import http
+from django.contrib.auth.models import Group,Permission
 
 from dj31.settings import dev
 from dj31.utils.fastdfs.fdfs import FDFS_Client
@@ -584,6 +585,7 @@ class Coursemanage(View):
         courses=mode.Course.objects.only('title','category__name','teacher__name').select_related('teacher','category').filter(is_delete=False)
         return render(request,'admin/courses/course_manage.html' ,context={'courses':courses})
 
+#课程编辑
 class CoursEdit(View):
     def get(self, request,c_id):
         course=mode.Course.objects.only('title').filter(id=c_id,is_delete=False).first()
@@ -632,10 +634,7 @@ class CoursEdit(View):
         course.save(update_fields=['is_delete'])
         return res_json(errmsg='删除课程成功')
 
-
-
-
-
+#课程发布
 class CoursePubView(View):
     def get(self, request):
         teachers = mode.Teacher.objects.only('name').filter(is_delete=False)
@@ -667,3 +666,118 @@ class CoursePubView(View):
                 err_m_l.append(i[0])
             err_msg_str = '/'.join(err_m_l)
             return res_json(errno=Code.PARAMERR, errmsg=err_msg_str)
+
+#组管理
+class Group_manage(View):
+    def get(self, request):
+        groups=Group.objects.values('id','name').annotate(num_users=Count('user')).order_by('num_users')
+        return render(request, 'admin/groups/groups_manage.html',context={'groups':groups})
+
+
+#组管理添加
+class Group_add(View):
+    def get(self,request):
+        per =Permission.objects.all()
+        return render(request,'admin/groups/groups_edit.html' ,context={'permissions':per})
+    def post(self,request):
+        json_data = request.body
+        if not json_data:
+            return res_json(errno=Code.PARAMERR, errmsg=error_map[Code.PARAMERR])
+        dict_data = json.loads(json_data.decode('utf8'))
+
+        # 取出组名，进行判断
+        group_name = dict_data.get('name', '').strip()
+        if not group_name:
+            return res_json(errno=Code.PARAMERR, errmsg='组名为空')
+
+        # 组名存在 false
+        one_group, is_created = Group.objects.get_or_create(name=group_name)
+        if not is_created:
+            return res_json(errno=Code.DATAEXIST, errmsg='组名已存在')
+
+        # 取出权限
+        group_permissions = dict_data.get('group_permission')
+        if not group_permissions:
+            return res_json(errno=Code.PARAMERR, errmsg='权限参数为空')
+
+        try:
+            permissions_set = set(int(i) for i in group_permissions)
+        except Exception as e:
+            logger.info('传的权限参数异常：\n{}'.format(e))
+            return res_json(errno=Code.PARAMERR, errmsg='权限参数异常')
+
+        all_permissions_set = set(i.id for i in Permission.objects.only('id'))
+        if not permissions_set.issubset(all_permissions_set):
+            return res_json(errno=Code.PARAMERR, errmsg='有不存在的权限参数')
+
+        # 设置权限
+        for perm_id in permissions_set:
+            p = Permission.objects.get(id=perm_id)
+            one_group.permissions.add(p)
+
+        one_group.save()
+        return res_json(errmsg='组创建成功！')
+
+class Group_edit(View):
+    def get(self,request,g_id):
+        group = Group.objects.filter(id=g_id).first()
+        if group:
+            per = Permission.objects.all()
+            return render(request,'admin/groups/groups_edit.html',context={'permissions':per,'group':group})
+        else:
+            return http.HttpResponseForbidden()
+
+    def put(self, request, g_id):
+        """
+        1, 获取参数   组名  权限
+        2，数据清洗
+        3，保存
+        4，返回
+
+        :param request:
+        :param g_id:
+        :return:
+        """
+        group = Group.objects.filter(id=g_id).first()
+        if not group:
+            return res_json(errno=Code.PARAMERR, errmsg='参数错误')
+
+        js_str = request.body
+        dict_data = json.loads(js_str)
+        # 组名
+        g_name = dict_data.get('name', '').strip()
+        if not g_name:
+            return res_json(errno=Code.PARAMERR, errmsg='参数错误')
+        if g_name != group.name and Group.objects.filter(name=g_name).exists():
+            return res_json(errno=Code.DATAEXIST, errmsg='组名存在')
+
+        # 权限校验
+        g_permission = dict_data['group_permission']  # [1,2,3,4,5]
+        if not g_permission:
+            return res_json(errno=Code.PARAMERR, errmsg='参数错误')
+        per_set = set(i for i in g_permission) #
+        # print(per_set)
+        # 去数据库取数据
+        db_per_set = set(i.id for i in group.permissions.all())
+        if per_set == db_per_set:
+            return res_json(errno=Code.DATAEXIST, errmsg='用户在没有修改')
+        group.permissions.clear()
+
+        # 设置权限 保存
+        for i in per_set:
+            p = Permission.objects.get(id=i)
+            group.permissions.add(p)
+
+        group.name = g_name
+        group.save()
+        return res_json(errmsg='组创建成功')
+
+
+    def delete(self,request,g_id):
+        g = Group.objects.filter(id=g_id).first()
+        if g:
+            g.permissions.clear()
+            g.delete()
+            return res_json(errmsg='删除成功')
+        else:
+            return http.HttpResponseForbidden()

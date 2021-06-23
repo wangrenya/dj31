@@ -26,6 +26,9 @@ urlpatterns = [
   path('courses/', views.Coursemanage.as_view(), name='course_manage'),
   path('courses/pub/', views.CoursePubView.as_view(), name='course_pub'),
   path('courses/<int:c_id>/', views.CoursEdit.as_view(), name='course_edit'),
+  path('groups/manage/', views.Group_manage.as_view(), name='groups_manage'),
+  path('groups/<int:g_id>/', views.Group_edit.as_view(), name='groups_edit'),
+  path('groups/add/', views.Group_add.as_view(), name='g_add'),
   path('',views.admin,name='admin'),
 
 
