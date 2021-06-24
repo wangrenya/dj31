@@ -29,6 +29,8 @@ urlpatterns = [
   path('groups/manage/', views.Group_manage.as_view(), name='groups_manage'),
   path('groups/<int:g_id>/', views.Group_edit.as_view(), name='groups_edit'),
   path('groups/add/', views.Group_add.as_view(), name='g_add'),
+  path('user_manager/', views.User_manager.as_view(), name='u_manager'),
+  path('user_edit/<int:u_id>/', views.User_edit.as_view(), name='u_edit'),
   path('',views.admin,name='admin'),
 
 

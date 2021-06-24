@@ -40,3 +40,6 @@ class Users(AbstractUser):
 
     def __str__(self):  # 打印对象时调用
         return self.username
+    def get_group_name(self):
+        g_name=(i.name for i in self.groups.all())
+        return '/'.join(g_name)

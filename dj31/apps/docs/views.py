@@ -13,7 +13,11 @@ def ds(request,d_id):
     doc_file=Doc.objects.only('file_url').filter(is_delete=False,id=d_id).first()
     if doc_file:
         doc_url=doc_file.file_url
-        doc_url =FILE_URL + doc_url
+        i = 'http://47.100.67.17:8888/' in doc_url
+        if i :
+            doc_url=doc_url
+        else:
+            doc_url =FILE_URL + doc_url
         res =http.FileResponse(requests.get(doc_url,stream=True))
         ex_name =doc_url.split('.')[-1]#pdf
         if not ex_name:

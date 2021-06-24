@@ -4,6 +4,8 @@ import logging
 from collections import OrderedDict
 from datetime import datetime
 from urllib.parse import urlencode
+
+from users.models import Users
 from .Forms import NewsPubForm
 from .Forms import DocsPubForm
 from .Forms import CoursePubForm
@@ -27,6 +29,8 @@ from news.views import login_req
 from dj31.utils.response_code import Code,res_json,error_map
 from django.utils.decorators import method_decorator
 params_status= res_json(errno=Code.PARAMERR,errmsg=error_map[Code.PARAMERR])
+from  django.contrib.auth.mixins import  PermissionDenied ,LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 @login_req
 def admin(request):
@@ -673,7 +677,6 @@ class Group_manage(View):
         groups=Group.objects.values('id','name').annotate(num_users=Count('user')).order_by('num_users')
         return render(request, 'admin/groups/groups_manage.html',context={'groups':groups})
 
-
 #组管理添加
 class Group_add(View):
     def get(self,request):
@@ -717,7 +720,7 @@ class Group_add(View):
 
         one_group.save()
         return res_json(errmsg='组创建成功！')
-
+#组编辑
 class Group_edit(View):
     def get(self,request,g_id):
         group = Group.objects.filter(id=g_id).first()
@@ -781,3 +784,80 @@ class Group_edit(View):
             return res_json(errmsg='删除成功')
         else:
             return http.HttpResponseForbidden()
+
+#用户管理
+class User_manager(View):
+    def get(self,request):
+        user=Users.objects.only('username','is_staff','is_superuser').filter(is_active=True)
+
+
+        return  render(request,'admin/groups/users_manage.html',context={'users':user})
+
+#用户编辑
+class User_edit(View):
+    def get(self,request,u_id):
+        user = Users.objects.filter(id=u_id).first()
+        if user:
+            Groups=Group.objects.only('name').all()
+            return render(request,'admin/groups/users_edit.html' ,context={'user_instance':user,'groups':Groups})
+        else:
+            return res_json(errno=Code.NODATA, errmsg='参数错误')
+    def put(self,request,u_id):
+        user_instance = Users.objects.filter(id=u_id,is_active=True).first()
+        if not user_instance:
+            return res_json(errno=Code.NODATA, errmsg='无数据')
+
+        json_str = request.body
+        if not json_str:
+            return res_json(errno=Code.PARAMERR, errmsg=error_map[Code.NODATA])
+
+        dict_data = json.loads(json_str)
+        try:
+            groups = dict_data.get('groups')
+            is_superuser = int(dict_data['is_superuser'])  # 0
+            is_staff = int(dict_data.get('is_staff'))  # 1
+            is_active = int(dict_data['is_active'])  # 1
+            params = (is_active, is_staff, is_superuser)
+            if not all([q in (0, 1) for q in params]):
+                return res_json(errno=Code.PARAMERR, errmsg='参数错误')
+        except Exception as e:
+            logger.info('从前端获取得用户参数错误{}'.format(e))
+            return res_json(errno=Code.PARAMERR, errmsg='参数错误')
+
+        try:
+            if groups:
+                groups_set = set(int(i) for i in groups)
+            else:
+                groups_set = set()
+        except Exception as e:
+            logger.info('用户组参数异常{}'.format(e))
+            return res_json(errno=Code.PARAMERR, errmsg='用户组参数异常')
+
+        # 组
+        all_groups_set = set(i.id for i in Group.objects.only('id'))
+        # 判断前台传得组是否在所有用户组里面
+        if not groups_set.issubset(all_groups_set):
+            return res_json(errno=Code.PARAMERR, errmsg='有不存在的用户组参数')
+
+        gsa = Group.objects.filter(id__in=groups_set)  # [1,3,4]
+
+        # 保存
+        user_instance.groups.clear()
+        user_instance.groups.set(gsa)
+        user_instance.is_staff = bool(is_staff)
+        user_instance.is_superuser = bool(is_superuser)
+        user_instance.is_active = bool(is_active)
+        user_instance.save()
+        return res_json(errmsg='用户组更新成功')
+
+    def delete(self,request,u_id):
+        user= Users.objects.filter(id=u_id).first()
+        if user:
+            user.groups.clear()
+            user.user_permissions.clear()
+            user.is_active=False
+            user.delete()     #删除数据库记录
+            # user.save()         #单纯修改数据库还有账号信息is_active=False
+            return res_json(errmsg='删除成功')
+        else:
+            return  res_json(errno=Code.NODATA,errmsg='参数错误')
